@@ -6,8 +6,8 @@ if __name__ == '__main__':
     if len(argv) > 1:
         message, username = argv[1], ''
         print '\033[1;35m' + message + '\033[0m'
-        while(username == ''):
-            username = raw_input('Enter username: ')
+        #while(username == ''):
+        #    username = raw_input('Enter username: ')
         while(True):
             password1 = getpass('Enter password: ')
             password2 = getpass('Re-enter password: ')
