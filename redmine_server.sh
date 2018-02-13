@@ -2,8 +2,9 @@
 # Script for ubuntu 14.04 LTS
 . lib/NetworkConnTest.sh
 . lib/declare_variables.sh
-MYSQL_PASS=123456
-REDMINE_PASS=123456
+
+python lib/user_creator.py "Set redmine admin password:" && MYSQL_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
+python lib/user_creator.py "Set redmine admin password:" && REDMINE_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
 REDMINE_SERVER_NAME=www.dqaredmine.com
 REDMINE_SERVER_ADMIN=blake.liou@vivotek.com
 
