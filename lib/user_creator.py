@@ -19,9 +19,10 @@ if __name__ == '__main__':
                 continue
             break
         if len(argv) > 2:
-            if argv[2] == '--showinfo':
-                print '{0};{1}'.format(username, password1)
+            #if argv[2] == '--showinfo':
+            #    print '{0};{1}'.format(username, password1)
         with open('/tmp/account.cache', 'w') as cache:
-            cache.write('username={0};password1={1}'.format(username, password1))
+            #cache.write('username={0};password1={1}'.format(username, password1))
+            cache.write('password1={0}'.format(password1))
     else:
         print 'Usage: python user_creator.py [Message] --showinfo'
