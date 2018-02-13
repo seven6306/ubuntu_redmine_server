@@ -2,12 +2,13 @@
 # Script for ubuntu 14.04 LTS
 . lib/NetworkConnTest.sh
 . lib/declare_variables.sh
-
-python lib/user_creator.py "Set redmine admin password:" && MYSQL_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
-python lib/user_creator.py "Set redmine admin password:" && REDMINE_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
+PORT=80
+PROTOCOL=http
 REDMINE_SERVER_NAME=www.dqaredmine.com
 REDMINE_SERVER_ADMIN=blake.liou@vivotek.com
 
+python lib/user_creator.py "Set redmine admin password:" && MYSQL_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
+python lib/user_creator.py "Set redmine admin password:" && REDMINE_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
 python lib/checkPermission.py || exit 1
 NetworkConnTest
 for each_pkg in apache2 redmine mysql-server
@@ -53,3 +54,4 @@ configure_apache2
 configure_mysql
 service apache2 restart
 update-rc.d apache2 enable
+printf "${LINE}\n\n${PURPLE}Redmine Server Info:${NC}\n * Server site - ${GREEN}${PROTOCOL}://`python lib/gethostIPaddr.py`${NC}${RED}:${PORT}${NC}\n * Admin User - ${GREEN}admin${NC}\n * Password - ${GREEN}admin${NC}\n\n"
