@@ -13,15 +13,30 @@ NetworkConnTest
 for each_pkg in apache2 redmine mysql-server
 do  python lib/checkInstall.py $each_pkg --install || exit 1
 done
-
 apt-get update -y
-apt-get install -y apache2 libapache2-mod-passenger
-cat << EOF | debconf-set-selections
+configure_apache2()
+{
+    apt-get install -y apache2 libapache2-mod-passenger
+    cat << EOF | debconf-set-selections
 mysql-server mysql-server/root_password password $MYSQL_PASS
 mysql-server mysql-server/root_password_again password $MYSQL_PASS
 EOF
-apt-get install -y mysql-server mysql-client
-cat << EOF | debconf-set-selections
+    cat << EOF | tee /etc/apache2/mods-available/passenger.conf
+<IfModule mod_passenger.c>
+  PassengerDefaultUser www-data
+  PassengerRoot /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini
+  PassengerDefaultRuby /usr/bin/ruby
+</IfModule>
+EOF
+    [ ! -f 000-default.conf ] && printf "${RED}ERROR: file 000-default.conf is lost.${NC}\n" && exit 1
+    cat 000-default.conf | tee /etc/apache2/sites-available/000-default.conf
+    sed -i "s,<REDMINE_SERVER_NAME>,$REDMINE_SERVER_NAME,g" /etc/apache2/sites-available/000-default.conf
+    sed -i "s,<REDMINE_SERVER_ADMIN>,$REDMINE_SERVER_ADMIN,g" /etc/apache2/sites-available/000-default.conf
+}
+configure_mysql()
+{
+    apt-get install -y mysql-server mysql-client
+    cat << EOF | debconf-set-selections
 redmine redmine/instances/default/dbconfig-install boolean true
 redmine redmine/instances/default/database-type select mysql
 redmine redmine/instances/default/mysql/admin-pass password $MYSQL_PASS
@@ -29,21 +44,12 @@ redmine redmine/instances/default/password-confirm password $MYSQL_PASS
 redmine redmine/instances/default/mysql/app-pass password $REDMINE_PASS
 redmine redmine/instances/default/app-password-confirm password $REDMINE_PASS
 EOF
-apt-get install -y redmine redmine-mysql
-
-cat << EOF | tee /etc/apache2/mods-available/passenger.conf
-<IfModule mod_passenger.c>
-  PassengerDefaultUser www-data
-  PassengerRoot /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini
-  PassengerDefaultRuby /usr/bin/ruby
-</IfModule>
-EOF
-ln -s /usr/share/redmine/public /var/www/redmine
-gem install bundler
-
-cat 000-default.conf | tee /etc/apache2/sites-available/000-default.conf
-sed -i "s,<REDMINE_SERVER_NAME>,$REDMINE_SERVER_NAME,g" /etc/apache2/sites-available/000-default.conf
-sed -i "s,<REDMINE_SERVER_ADMIN>,$REDMINE_SERVER_ADMIN,g" /etc/apache2/sites-available/000-default.conf
-
-chown -R www-data:www-data /usr/share/redmine/
+    apt-get install -y redmine redmine-mysql
+    ln -s /usr/share/redmine/public /var/www/redmine
+    gem install bundler
+    chown -R www-data:www-data /usr/share/redmine/
+}
+configure_apache2
+configure_mysql
 service apache2 restart
+update-rc.d apache2 enable
