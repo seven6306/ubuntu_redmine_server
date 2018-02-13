@@ -18,9 +18,9 @@ if __name__ == '__main__':
                 print '\033[0;31mERROR: password do not match.\033[0m'
                 continue
             break
-        if len(argv) > 2:
-            #if argv[2] == '--showinfo':
-            #    print '{0};{1}'.format(username, password1)
+        #if len(argv) > 2:
+        #    if argv[2] == '--showinfo':
+        #        print '{0};{1}'.format(username, password1)
         with open('/tmp/account.cache', 'w') as cache:
             #cache.write('username={0};password1={1}'.format(username, password1))
             cache.write(password1)
