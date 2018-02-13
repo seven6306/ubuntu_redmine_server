@@ -7,8 +7,8 @@ PROTOCOL=http
 REDMINE_SERVER_NAME=www.dqaredmine.com
 REDMINE_SERVER_ADMIN=blake.liou@vivotek.com
 
-python lib/user_creator.py "Set redmine admin password:" && MYSQL_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
-python lib/user_creator.py "Set redmine admin password:" && REDMINE_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
+python lib/user_creator.py "Set MySQL root password:" && MYSQL_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
+python lib/user_creator.py "Set Redmine admin password:" && REDMINE_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
 python lib/checkPermission.py || exit 1
 NetworkConnTest
 for each_pkg in apache2 redmine mysql-server
