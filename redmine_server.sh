@@ -10,8 +10,8 @@ REDMINE_SERVER_ADMIN=blake.liou@vivotek.com
 
 python lib/checkPermission.py || exit 1
 NetworkConnTest
-for e in apache2 redmine mysql-server
-do  python lib/checkInstall.py $e --install || exit 1
+for each_pkg in apache2 redmine mysql-server
+do  python lib/checkInstall.py $each_pkg --install || exit 1
 done
 
 apt-get update -y
