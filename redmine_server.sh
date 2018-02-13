@@ -1,10 +1,17 @@
 #!/bin/bash
 # Script for ubuntu 14.04 LTS
-
+. lib/NetworkConnTest.sh
+. lib/declare_variables.sh
 MYSQL_PASS=123456
 REDMINE_PASS=123456
 REDMINE_SERVER_NAME=www.dqaredmine.com
 REDMINE_SERVER_ADMIN=blake.liou@vivotek.com
+
+python lib/checkPermission.py || exit 1
+NetworkConnTest
+for e in apache2 redmine mysql-server
+do  python lib/checkInstall.py $e --install || exit 1
+done
 
 apt-get update -y
 apt-get install -y apache2 libapache2-mod-passenger
