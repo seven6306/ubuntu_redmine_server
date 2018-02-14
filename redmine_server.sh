@@ -7,14 +7,6 @@ PROTOCOL=http
 REDMINE_SERVER_NAME=www.dqaredmine.com
 REDMINE_SERVER_ADMIN=blake.liou@vivotek.com
 
-python lib/checkPermission.py || exit 1
-NetworkConnTest
-for each_pkg in apache2 redmine mysql-server
-do  python lib/checkInstall.py $each_pkg --install || exit 1
-done
-python lib/user_creator.py "Set MySQL root password:" && MYSQL_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
-python lib/user_creator.py "Set Redmine admin password:" && REDMINE_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
-apt-get update -y
 configure_apache2()
 {
     apt-get install -y apache2 libapache2-mod-passenger
@@ -22,6 +14,7 @@ configure_apache2()
 mysql-server mysql-server/root_password password $MYSQL_PASS
 mysql-server mysql-server/root_password_again password $MYSQL_PASS
 EOF
+    python lib/back_file.py '/etc/apache2/mods-available/passenger.conf,/etc/apache2/sites-available/000-default.conf'
     cat << EOF | tee /etc/apache2/mods-available/passenger.conf
 <IfModule mod_passenger.c>
   PassengerDefaultUser www-data
@@ -50,6 +43,21 @@ EOF
     gem install bundler
     chown -R www-data:www-data /usr/share/redmine/
 }
+# main
+python lib/checkPermission.py || exit 1
+NetworkConnTest
+for each_pkg in apache2 redmine mysql-server
+do  python lib/checkInstall.py $each_pkg --install || exit 1
+done
+if [ "$#" -ne 0 ]; then
+    case $1 in
+    -y|--yes)
+        printf "\n";;
+    esac
+fi
+[ -z "$MYSQL_PASS" ] && python lib/user_creator.py "Set MySQL root password:" && MYSQL_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
+[ -z "$REDMINE_PASS" ] && python lib/user_creator.py "Set Redmine admin password:" && REDMINE_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
+apt-get update -y
 configure_apache2
 configure_mysql
 service apache2 restart
