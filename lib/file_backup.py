@@ -8,11 +8,13 @@ def backup(files):
     try:
         if not isdir('backup'):
             makedirs('backup')
+            print " * Create backup directory at currently path."
         for each_file in files.split(','):
             bak = join('backup', basename(each_file))
             if isfile(bak):
                 remove(bak)
             copy(each_file, bak)
+            print " * Backup file: \033[0;32m{}\033[0m".format(each_file)
         return True
     except Exception as err:
         print str(err)
@@ -23,4 +25,4 @@ if __name__ == '__main__':
         if not backup(files):
             raise SystemExit(2)
     else:
-        'Usage: python file_backup.py [Files]\n       e.g., python file_backup.py /home/blake/bak1.conf,/home/blake/bak2.txt'
+        print 'Usage: python file_backup.py [Files]\n       e.g., python file_backup.py /home/blake/bak1.conf,/home/blake/bak2.txt'
