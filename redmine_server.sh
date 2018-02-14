@@ -54,10 +54,13 @@ if [ "$#" -ne 0 ]; then
     case $1 in
     -y|--yes)
         [ `echo $2 | grep -cE "^mysql_passwd=\w+$"` -ne 0 ] && MYSQL_PASS=`echo $2 | cut -d\= -f2` || exit 1
-        [ `echo $3 | grep -cE "^redmine_passwd=\w+$"` -ne 0 ] && REDMINE_PASS=`echo $3 | cut -d\= -f2` || exit 1;;
+        [ `echo $3 | grep -cE "^redmine_passwd=\w+$"` -ne 0 ] && REDMINE_PASS=`echo $3 | cut -d\= -f2` || exit 1
+        NOASK=1;;
     esac
 fi
-python lib/notification.py "Setup redmine server will take 5-10 minutes, Are you sure? [y/N]: " "${LINE}\n${PURPLE}Web service apache2 download and setup starting:${NC}\n${LINE}\n" || exit 0
+if [ $NOASK -eq 0 ]; then
+    python lib/notification.py "Setup redmine server will take 5-10 minutes, Are you sure? [y/N]: " "${LINE}\n${PURPLE}Web service apache2 download and setup starting:${NC}\n${LINE}\n" || exit 0
+fi
 [ -z "$MYSQL_PASS" ] && python lib/user_creator.py "Set MySQL root password:" && MYSQL_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
 [ -z "$REDMINE_PASS" ] && python lib/user_creator.py "Set Redmine admin password:" && REDMINE_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
 configure_apache2
