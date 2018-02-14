@@ -9,6 +9,7 @@ REDMINE_SERVER_ADMIN=blake.liou@vivotek.com
 
 configure_apache2()
 {
+    apt-get update -y
     apt-get install -y apache2 libapache2-mod-passenger
     cat << EOF | debconf-set-selections
 mysql-server mysql-server/root_password password $MYSQL_PASS
@@ -52,12 +53,12 @@ done
 if [ "$#" -ne 0 ]; then
     case $1 in
     -y|--yes)
-        printf "\n";;
+        [ `echo $2 | grep -cE "^mysql_passwd=\w+$"` -ne 0 ] && MYSQL_PASS=`echo $2 | cut -d\= -f2` || exit 1
+        [ `echo $3 | grep -cE "^redmine_passwd=\w+$"` -ne 0 ] && REDMINE_PASS=`echo $3 | cut -d\= -f2` || exit 1;;
     esac
 fi
 [ -z "$MYSQL_PASS" ] && python lib/user_creator.py "Set MySQL root password:" && MYSQL_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
 [ -z "$REDMINE_PASS" ] && python lib/user_creator.py "Set Redmine admin password:" && REDMINE_PASS=`cat /tmp/account.cache` && rm -f /tmp/account.cache
-apt-get update -y
 configure_apache2
 configure_mysql
 service apache2 restart
