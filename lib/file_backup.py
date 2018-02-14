@@ -23,4 +23,4 @@ if __name__ == '__main__':
         if not backup(files):
             raise SystemExit(2)
     else:
-        'Usage: python file_backup.py [Files]\ne.g., python file_backup.py /home/blake/bak1.conf,/home/blake/bak2.txt'
+        'Usage: python file_backup.py [Files]\n       e.g., python file_backup.py /home/blake/bak1.conf,/home/blake/bak2.txt'
