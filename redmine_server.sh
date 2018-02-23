@@ -48,14 +48,9 @@ EOF
     chown -R www-data:www-data /usr/share/redmine/
 }
 # main
-[ "$1" = "?" -o "$1" = "-h" -o "$1" = "--help" ] && python lib/print_usage.py README.md && exit 0
-python lib/checkPermission.py || exit 1
-NetworkConnTest
-for each_pkg in apache2 redmine mysql-server
-do  python lib/checkInstall.py $each_pkg --install || exit 1
-done
 if [ "$#" -ne 0 ]; then
     case $1 in
+    ?|-h|--help) python lib/print_usage.py README.md && exit 0;;
     -y|--yes)
         [ `echo $2 | grep -cE "^mysql_passwd=\w+$"` -ne 0 ] && MYSQL_PASS=`echo $2 | cut -d\= -f2` || exit 1
         [ `echo $3 | grep -cE "^redmine_passwd=\w+$"` -ne 0 ] && REDMINE_PASS=`echo $3 | cut -d\= -f2` || exit 1
@@ -63,6 +58,11 @@ if [ "$#" -ne 0 ]; then
     * ) python lib/print_usage.py README.md && exit 1;;
     esac
 fi
+python lib/checkPermission.py || exit 1
+NetworkConnTest
+for each_pkg in apache2 redmine mysql-server
+do  python lib/checkInstall.py $each_pkg --install || exit 1
+done
 if [ $NOASK -eq 0 ]; then
     python lib/notification.py "Setup redmine server will take 5-10 minutes, Are you sure? [y/N]: " "${LINE}\n${PURPLE}Web service apache2 download and setup starting:${NC}\n${LINE}\n" || exit 0
 fi
