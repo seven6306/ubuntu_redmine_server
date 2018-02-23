@@ -50,7 +50,7 @@ EOF
 # main
 if [ "$#" -ne 0 ]; then
     case $1 in
-    ?|-h|--help) python lib/print_usage.py README.md && exit 0;;
+    \?|-h|--help) python lib/print_usage.py README.md && exit 0;;
     -y|--yes)
         [ `echo $2 | grep -cE "^mysql_passwd=\w+$"` -ne 0 ] && MYSQL_PASS=`echo $2 | cut -d\= -f2` || exit 1
         [ `echo $3 | grep -cE "^redmine_passwd=\w+$"` -ne 0 ] && REDMINE_PASS=`echo $3 | cut -d\= -f2` || exit 1
