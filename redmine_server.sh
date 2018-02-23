@@ -48,6 +48,7 @@ EOF
     chown -R www-data:www-data /usr/share/redmine/
 }
 # main
+[ "$1" = "?" -o "$1" = "-h" -o "$1" = "--help" ] && python lib/print_usage.py README.md && exit 0
 python lib/checkPermission.py || exit 1
 NetworkConnTest
 for each_pkg in apache2 redmine mysql-server
@@ -59,6 +60,7 @@ if [ "$#" -ne 0 ]; then
         [ `echo $2 | grep -cE "^mysql_passwd=\w+$"` -ne 0 ] && MYSQL_PASS=`echo $2 | cut -d\= -f2` || exit 1
         [ `echo $3 | grep -cE "^redmine_passwd=\w+$"` -ne 0 ] && REDMINE_PASS=`echo $3 | cut -d\= -f2` || exit 1
         NOASK=1;;
+    * ) python lib/print_usage.py README.md && exit 1;;
     esac
 fi
 if [ $NOASK -eq 0 ]; then
