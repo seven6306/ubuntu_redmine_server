@@ -7,8 +7,9 @@ Usage:
       Quickly install redmine server command as below.
 
       sh jenkins_server.sh [OPTION] [ARGV1] [ARGV2]
-      -y, --yes     No required question to set MySQL and redmine password
-                    mysql_passwd=[rootPassword] redmine_passwd=[adminPassword]
+      -h, --help      Show script usage
+      -y, --yes       No required question to set MySQL and redmine password
+                      mysql_passwd=[rootPassword] redmine_passwd=[adminPassword]
 
       e.g., sh jenkins_server.sh -y mysql_passwd=123456 redmine_passwd=654321
 ```
