@@ -9,6 +9,7 @@ REDMINE_SERVER_ADMIN=blake.liou@vivotek.com
 
 configure_apache2()
 {
+    printf "${LINE}\n${PURPLE}Apache2 web service download and setup starting:${NC}\n${LINE}\n"
     apt-get update -y
     apt-get install -y apache2 libapache2-mod-passenger
     cat << EOF | debconf-set-selections
@@ -30,6 +31,7 @@ EOF
 }
 configure_mysql()
 {
+    printf "${LINE}\n${PURPLE}MySQL service download and setup starting:${NC}\n${LINE}\n"
     apt-get install -y mysql-server mysql-client
     cat << EOF | debconf-set-selections
 redmine redmine/instances/default/dbconfig-install boolean true
@@ -39,6 +41,7 @@ redmine redmine/instances/default/password-confirm password $MYSQL_PASS
 redmine redmine/instances/default/mysql/app-pass password $REDMINE_PASS
 redmine redmine/instances/default/app-password-confirm password $REDMINE_PASS
 EOF
+    printf "${LINE}\n${PURPLE}Redmine server download and setup starting:${NC}\n${LINE}\n"
     apt-get install -y redmine redmine-mysql
     ln -s /usr/share/redmine/public /var/www/redmine
     gem install bundler
