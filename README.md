@@ -2,7 +2,7 @@
 
 ## How to use it
 
-```javascript
+```sh
 Usage:
       Quickly install redmine server command as below.
 
